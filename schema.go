@@ -38,20 +38,20 @@ func init() {
 		},
 	})
 
-	photoConnection = relay.ConnectionDefinitions(relay.ConnectionConfig{
-		Name:     "PhotoConnection",
-		NodeType: rawPhotoType,
-	})
-
 	rawPhotoType = graphql.NewObject(graphql.ObjectConfig{
 		Name:        "RawPhoto",
 		Description: "A photo binary blob",
 		Fields: graphql.Fields{
-			"id": relay.GlobalIDField("Photo", nil),
+			"id": relay.GlobalIDField("RawPhoto", nil),
 		},
 		Interfaces: []*graphql.Interface{
 			nodeDefinitions.NodeInterface,
 		},
+	})
+
+	photoConnection = relay.ConnectionDefinitions(relay.ConnectionConfig{
+		Name:     "PhotoConnection",
+		NodeType: rawPhotoType,
 	})
 
 	userType = graphql.NewObject(graphql.ObjectConfig{
@@ -61,7 +61,7 @@ func init() {
 			"id": relay.GlobalIDField("User", nil),
 			"photos": &graphql.Field{
 				Type:        photoConnection.ConnectionType,
-				Description: "A person's collection of photos",
+				Description: "A user's collection of photos",
 				Args:        relay.ConnectionArgs,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					args := relay.NewConnectionArguments(p.Args)

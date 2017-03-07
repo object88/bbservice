@@ -5,14 +5,13 @@ import (
 	"net/http"
 
 	"github.com/graphql-go/handler"
-	"github.com/object88/bbgraph/data"
 )
 
 func main() {
 
 	// simplest relay-compliant graphql server HTTP handler
 	h := handler.New(&handler.Config{
-		Schema: &data.Schema,
+		Schema: &Schema,
 		Pretty: true,
 	})
 
