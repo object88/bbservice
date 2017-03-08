@@ -1,4 +1,4 @@
-package bbservice
+package data
 
 import (
 	"fmt"

@@ -8,13 +8,13 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/testutil"
-	"github.com/object88/bbservice"
+	"github.com/object88/bbservice/data"
 )
 
 func main() {
 	// Save JSON of full schema introspection for Babel Relay Plugin to use
 	result := graphql.Do(graphql.Params{
-		Schema:        bbservice.Schema,
+		Schema:        data.Schema,
 		RequestString: testutil.IntrospectionQuery,
 	})
 	if result.HasErrors() {

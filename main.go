@@ -1,17 +1,18 @@
-package bbservice
+package main
 
 import (
 	"log"
 	"net/http"
 
 	"github.com/graphql-go/handler"
+	"github.com/object88/bbservice/data"
 )
 
 func main() {
 
 	// simplest relay-compliant graphql server HTTP handler
 	h := handler.New(&handler.Config{
-		Schema: &Schema,
+		Schema: &data.Schema,
 		Pretty: true,
 	})
 
