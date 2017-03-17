@@ -6,6 +6,7 @@ import (
 
 	"github.com/graphql-go/handler"
 	"github.com/object88/bbservice/data"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -16,13 +17,21 @@ func main() {
 		Pretty: true,
 	})
 
+	c := cors.New(cors.Options{
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"access-control-allow-methods", "access-control-allow-origin", "content-type"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedOrigins:   []string{"https://localhost:3001"},
+		Debug:            true,
+	})
+
 	// create graphql endpoint
-	http.Handle("/graphql", h)
+	http.Handle("/graphql", c.Handler(h))
 
 	// serve!
 	port := ":8081"
-	log.Printf(`GraphQL server starting up on http://localhost%s`, port)
-	err := http.ListenAndServe(port, nil)
+	log.Printf(`GraphQL server starting up on https://localhost%s`, port)
+	err := http.ListenAndServeTLS(port, "cert.pem", "key.pem", nil)
 	if err != nil {
 		log.Fatalf("ListenAndServe failed, %v", err)
 	}
