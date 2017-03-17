@@ -1,4 +1,5 @@
 bin
 
+*.pem
 setup.sh
 schema.json
