@@ -43,6 +43,10 @@ func init() {
 		Description: "A photo binary blob",
 		Fields: graphql.Fields{
 			"id": relay.GlobalIDField("RawPhoto", nil),
+			"url": &graphql.Field{
+				Type:        graphql.String,
+				Description: "The URL to the image.",
+			},
 		},
 		Interfaces: []*graphql.Interface{
 			nodeDefinitions.NodeInterface,

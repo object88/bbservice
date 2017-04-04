@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -27,7 +28,12 @@ func GetRawPhotos(ctx context.Context) []*RawPhoto {
 
 	photos := make([]*RawPhoto, 10)
 	for i := 0; i < 10; i++ {
-		photos[i] = &RawPhoto{ID: bson.NewObjectId(), Owner: userID}
+		id := bson.NewObjectId()
+		photos[i] = &RawPhoto{
+			ID:    id,
+			Owner: userID,
+			URL:   fmt.Sprintf("https://localhost:8081/image?id=%s", id.Hex()),
+		}
 	}
 	return photos
 }
@@ -40,6 +46,7 @@ func GetRawPhoto(ctx context.Context, id string) *RawPhoto {
 	query := c.Find(bson.M{"_id": oid})
 	var u *RawPhoto
 	query.One(u)
+	u.URL = fmt.Sprintf("https://localhost:8081/image?id=%s", u.ID.Hex())
 	return u
 }
 
