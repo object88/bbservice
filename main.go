@@ -4,29 +4,16 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/graphql-go/handler"
 	"github.com/object88/bbservice/data"
-	"github.com/rs/cors"
 )
 
 func main() {
-
-	// simplest relay-compliant graphql server HTTP handler
-	h := handler.New(&handler.Config{
-		Schema: &data.Schema,
-		Pretty: true,
-	})
-
-	c := cors.New(cors.Options{
-		AllowCredentials: true,
-		AllowedHeaders:   []string{"access-control-allow-methods", "access-control-allow-origin", "content-type"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedOrigins:   []string{"https://localhost:3001"},
-		Debug:            true,
-	})
+	ds := data.CreateDatabaseSession()
+	r := data.CreateRelayMiddleware()
 
 	// create graphql endpoint
-	http.Handle("/graphql", c.Handler(h))
+	http.Handle("/graphql", data.Chain(r.AttachMiddleware(), ds.AttachMiddleware(), data.CorsMiddleware()))
+	http.HandleFunc("/image", data.Chain(data.StreamImage, ds.AttachMiddleware()))
 
 	// serve!
 	port := ":8081"

@@ -1,6 +1,8 @@
 package data
 
 import (
+	"context"
+
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -11,22 +13,29 @@ func getCollection(s *mgo.Session, dbName string, collectionName string) *mgo.Co
 }
 
 // GetRawPhotos returns all photos
-func GetRawPhotos() []*RawPhoto {
-	s := GetSession()
-	c := getCollection(s, "bbgraph", "rawphotos")
-	query := c.Find(nil)
-	var photos []*RawPhoto
-	query.All(&photos)
-	if photos != nil {
-		return photos
+func GetRawPhotos(ctx context.Context) []*RawPhoto {
+	// s := GetSessionFromContext()
+	// c := getCollection(s, "bbgraph", "rawphotos")
+	// query := c.Find(nil)
+	// var photos []*RawPhoto
+	// query.All(&photos)
+	// if photos != nil {
+	// 	return photos
+	// }
+	// return []*RawPhoto{}
+	userID := bson.NewObjectId()
+
+	photos := make([]*RawPhoto, 10)
+	for i := 0; i < 10; i++ {
+		photos[i] = &RawPhoto{ID: bson.NewObjectId(), Owner: userID}
 	}
-	return []*RawPhoto{}
+	return photos
 }
 
 // GetRawPhoto returns a *RawPhoto with the matching id
-func GetRawPhoto(id string) *RawPhoto {
+func GetRawPhoto(ctx context.Context, id string) *RawPhoto {
 	oid := bson.ObjectIdHex(id)
-	s := GetSession()
+	s := GetSessionFromContext(ctx)
 	c := getCollection(s, "bbgraph", "rawphotos")
 	query := c.Find(bson.M{"_id": oid})
 	var u *RawPhoto
@@ -35,9 +44,9 @@ func GetRawPhoto(id string) *RawPhoto {
 }
 
 // GetUser returns a *User with the matching id
-func GetUser(id string) *User {
+func GetUser(ctx context.Context, id string) *User {
 	oid := bson.ObjectIdHex(id)
-	s := GetSession()
+	s := GetSessionFromContext(ctx)
 	c := getCollection(s, "bbgraph", "users")
 	query := c.Find(bson.M{"_id": oid})
 	var u *User
@@ -46,6 +55,6 @@ func GetUser(id string) *User {
 }
 
 // GetViewer returns the current user
-func GetViewer() *User {
-	return GetUser("000000000000000000000001")
+func GetViewer(ctx context.Context) *User {
+	return GetUser(ctx, "000000000000000000000001")
 }

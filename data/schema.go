@@ -21,9 +21,9 @@ func init() {
 		IDFetcher: func(id string, info graphql.ResolveInfo, ct context.Context) (interface{}, error) {
 			resolvedID := relay.FromGlobalID(id)
 			if resolvedID.Type == "RawPhoto" {
-				return GetRawPhoto(resolvedID.ID), nil
+				return GetRawPhoto(ct, resolvedID.ID), nil
 			} else if resolvedID.Type == "User" {
-				return GetUser(resolvedID.ID), nil
+				return GetUser(ct, resolvedID.ID), nil
 			}
 			return nil, nil
 		},
@@ -65,7 +65,7 @@ func init() {
 				Args:        relay.ConnectionArgs,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					args := relay.NewConnectionArguments(p.Args)
-					dataSlice := PhotosToInterfaceSlice(GetRawPhotos()...)
+					dataSlice := PhotosToInterfaceSlice(GetRawPhotos(p.Context)...)
 					return relay.ConnectionFromArray(dataSlice, args), nil
 				},
 			},
@@ -84,7 +84,7 @@ func init() {
 			"viewer": &graphql.Field{
 				Type: userType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					return GetViewer(), nil
+					return GetViewer(p.Context), nil
 				},
 			},
 		},
