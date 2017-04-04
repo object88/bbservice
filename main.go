@@ -8,11 +8,12 @@ import (
 )
 
 func main() {
+	c := data.CreateCorsMiddleware()
 	ds := data.CreateDatabaseSession()
 	r := data.CreateRelayMiddleware()
 
 	// create graphql endpoint
-	http.Handle("/graphql", data.Chain(r.AttachMiddleware(), ds.AttachMiddleware(), data.CorsMiddleware()))
+	http.Handle("/graphql", data.Chain(r.AttachMiddleware(), ds.AttachMiddleware(), c.AttachMiddleware()))
 	http.HandleFunc("/image", data.Chain(data.StreamImage, ds.AttachMiddleware()))
 
 	// serve!
